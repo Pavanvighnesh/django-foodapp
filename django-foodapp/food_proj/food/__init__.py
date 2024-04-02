@@ -321,6 +321,58 @@ item-form html
  
 </div>
 {% endblock %}
+
+### This code is for django restframework###
+***models.py***
+from django.db import models
+
+class movie(models.Model):
+    name=models.CharField(max_length=200)
+    duration=models.FloatField()
+    rating=models.FloatField()
+
+
+    def __str__(self):
+        return self.name
+
+***serialization.py***
+from rest_framework import serializers
+from .models import movie
+
+class MovieSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=movie
+        fields=['id','name','duration','rating']
+
+***views.py***
+from django.shortcuts import render
+from rest_framework import viewsets
+from .models import movie
+from .serializers import MovieSerializer
+
+class MovieViewSet(viewsets.ModelViewSet):
+    queryset=movie.objects.all()
+    serializer_class=MovieSerializer
+
+
+***urls.py***
+from django.contrib import admin
+from django.urls import path,include
+from rest_framework import routers
+from .views import MovieViewSet
+
+
+
+router=routers.DefaultRouter()
+router.register('movies',MovieViewSet)
+urlpatterns = [
+    path('admin2/', admin.site.urls),
+    path('',include(router.urls)),
+    # Include other URLs specific to the 'movies' app here
+]
+
+        
+        
  
  
  
